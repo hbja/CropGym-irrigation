@@ -1,4 +1,4 @@
-This repository contains an extended version of [_CropGym_](cropgym.ai); the code used in the paper "_Adaptive fertilizer management for optimizing nitrogen use efficiency
+This repository contains an extended version of [_CropGym_](https://cropgym.ai); the code used in the paper "_Adaptive fertilizer management for optimizing nitrogen use efficiency
 with constrained reinforcement learning_".
 
 ### How to install:
