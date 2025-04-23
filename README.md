@@ -7,7 +7,7 @@ Requires python 3.9+
 
 1. Clone the [PCSE](https://github.com/ajwdewit/pcse.git) repo and install
 2. Clone this repo
-3. Download [this](https://drive.google.com/file/d/1mCIrY8Gkyik2EcTsXAdHFFr-L6FrkK5S/view?usp=sharing) file and unzip the single `csv` file under the folder `pcse_gym/utils/weather_utils/random_weather_csv/` (create the non-existing folders). It is the generated random weather used to train the RL agents. 
+3. Download [this](https://doi.org/10.5281/zenodo.15267400) file and put the `.csv` file under the folder `pcse_gym/utils/weather_utils/random_weather_csv/` (create the non-existing folders). It is the generated random weather used to train the RL agents. 
 4. Install stable-baselines3, sb3contrib, scipy, lib_programname, rllte-core and tqdm with pip
 
 ### How to use:
