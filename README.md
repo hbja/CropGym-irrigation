@@ -1,5 +1,5 @@
-This repository contains an extended version of [_CropGym_](https://cropgym.ai); the code used in the paper "_Adaptive fertilizer management for optimizing nitrogen use efficiency
-with constrained reinforcement learning_".
+This repository contains an extended version of [_CropGym_](https://cropgym.ai); the code used in the paper "[_Adaptive fertilizer management for optimizing nitrogen use efficiency
+with constrained reinforcement learning_](https://www.sciencedirect.com/science/article/pii/S016816992500660X)".
 
 ### How to install:
 
@@ -16,3 +16,23 @@ Example to train a model using the NUE reward function with the LagrangianPPO ag
 
 `python train_winterwheat.py --reward NUE --environment 2 --agent LagPPO --seed 4 --nsteps 3000000 --random-weather --random-init --irs E3B`
 
+### Citation
+
+If you find our work useful, please consider citing our work.
+
+```
+@article{baja2025nue,
+  title={Adaptive fertilizer management for optimizing nitrogen use efficiency with constrained reinforcement learning},
+  author={Baja, Hilmy and Kallenberg, Michiel GJ and Berghuijs, Herman NC and Athanasiadis, Ioannis N},
+  journal={Computers and Electronics in Agriculture},
+  volume={237},
+  pages={110554},
+  year={2025},
+  publisher={Elsevier},
+  doi={10.1016/j.compag.2025.110554},
+}
+```
+
+### Acknowledgements
+
+This work was done as part of the EU Horizon project, [Smart Droplets](https://github.com/Smart-Droplets-Project).
