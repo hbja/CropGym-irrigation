@@ -274,6 +274,10 @@ class Engine(pcse.engine.Engine):
     def terminated(self):
         return self._flag_terminated
 
+    @property
+    def wdp(self):
+        return self.weatherdataprovider
+
     def _terminate_simulation(self, day):
         super()._terminate_simulation(day)
         self._flag_terminated = True

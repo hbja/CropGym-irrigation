@@ -106,9 +106,6 @@ def wrapper_vectorized_env(env_pcse_train, flag_po, flag_eval=False, multiproc=F
     from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv, SubprocVecEnv
     if normalize:
         return DummyVecEnv([lambda: env_pcse_train])
-    if flag_po:
-        return VecNormalizePO(DummyVecEnv([lambda: env_pcse_train]), norm_obs=True, norm_reward=True,
-                              clip_obs=10000000., clip_reward=100000., gamma=1)
     if multiproc and not flag_eval:
         vec_env = SubprocVecEnv([lambda: env_pcse_train for _ in range(n_envs)])
         return VecNormalize(vec_env, norm_obs=True, norm_reward=True,
@@ -224,6 +221,7 @@ def train(log_dir, n_steps,
           pcse_model=0, agent='PPO', reward=None,
           seed=0, tag="Exp", costs_nitrogen=10.0,
           multiprocess=False, eval_freq=20_000,
+          mode='fertilization',
           **kwargs):
     """
     Train a PPO agent (Stable Baselines3).
@@ -294,7 +292,7 @@ def train(log_dir, n_steps,
                                  action_space=action_space, action_multiplier=1.0, seed=seed,
                                  reward=reward, **get_model_kwargs(pcse_model, train_locations,
                                                                    start_type=kwargs.get('start_type', 'sowing')),
-                                 **kwargs)
+                                 mode=mode, **kwargs)
 
     env_pcse_train = Monitor(env_pcse_train)
 
@@ -400,7 +398,7 @@ def train(log_dir, n_steps,
                                 action_space=action_space, action_multiplier=1.0, reward=reward,
                                 **get_model_kwargs(pcse_model, train_locations,
                                                    start_type=kwargs.get('start_type', 'sowing')),
-                                **kwargs, seed=seed)
+                                **kwargs, mode=mode, seed=seed)
     if action_limit or n_budget > 0 or temporal_constraint:
         env_pcse_eval = ActionConstrainer(env_pcse_eval, action_limit=action_limit, n_budget=n_budget)
 
@@ -545,4 +543,4 @@ if __name__ == '__main__':
           action_features=action_features, action_space=action_spaces,
           pcse_model=args.environment, agent=args.agent,
           reward=args.reward, multiprocess=args.multiproc, **kwargs,
-          eval_freq=args.eval_freq, device=args.device)
+          eval_freq=args.eval_freq, device=args.device, mode=args.action_mode)

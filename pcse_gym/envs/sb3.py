@@ -382,6 +382,9 @@ class StableBaselinesWrapper(common_env.PCSEEnv):
     def loc(self, location):
         self._location = location
 
+    def wdp(self):
+        return self.model.wdp
+
     @property
     def timestep(self):
         return self._timestep

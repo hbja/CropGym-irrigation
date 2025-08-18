@@ -350,7 +350,8 @@ class WinterWheat(gym.Env):
         nh4concr, no3concr = convert_year_to_n_concentration(self.sb3_env.agmt.crop_end_date.year,
                                                              agmt=self.sb3_env.agmt,
                                                              random_weather=self.random_weather,
-                                                             loc=self.loc)
+                                                             loc=self.loc,
+                                                             wdp=self.wdp,)
 
         site_parameters = {'NH4ConcR': nh4concr, 'NO3ConcR': no3concr, }
         return site_parameters
@@ -492,6 +493,10 @@ class WinterWheat(gym.Env):
     @property
     def model(self):
         return self.sb3_env.model
+
+    @property
+    def wdp(self):
+        return self.sb3_env.model.wdp
 
     @model.setter
     def model(self, model):
