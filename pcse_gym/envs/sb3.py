@@ -178,7 +178,7 @@ class StableBaselinesWrapper(common_env.PCSEEnv):
                  weather_features=defaults.get_default_weather_features(),
                  action_features=defaults.get_default_action_features(), costs_nitrogen=10.0, timestep=7,
                  years=None, location=None, seed=0, action_space=gym.spaces.Box(0, np.inf, shape=(1,)),
-                 action_multiplier=1.0, *args, **kwargs):
+                 action_multiplier=1.0, mode='fertilization', *args, **kwargs):
         self.costs_nitrogen = costs_nitrogen
         self.crop_features = crop_features
         self.weather_features = weather_features
@@ -201,7 +201,8 @@ class StableBaselinesWrapper(common_env.PCSEEnv):
         self.n_action = 0
         self.steps_since_last_zero = 0
         self.dvs = 0
-        super().__init__(timestep=timestep, years=years, location=location, *args, **kwargs)
+        self.action_mode = mode
+        super().__init__(timestep=timestep, years=years, location=location, action_mode=self.action_mode, *args, **kwargs)
         self.action_space = action_space
         self.action_multiplier = action_multiplier
         self.args_vrr = kwargs.get('args_vrr', None)

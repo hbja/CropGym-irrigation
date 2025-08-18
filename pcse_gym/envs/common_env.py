@@ -204,8 +204,10 @@ class Engine(pcse.engine.Engine):
     """
 
     def __init__(self, *args, **kwargs):
+        _action_mode = kwargs.pop('action_mode', None)
         super().__init__(*args, **kwargs)
         self._flag_terminated = False
+        self._action_mode = _action_mode if not None else 'fertilization'
 
     def _run(self, action):
         """Make one time step of the simulation.
@@ -225,21 +227,28 @@ class Engine(pcse.engine.Engine):
 
         # Do actions
         if action > 0:
-            self._send_signal(signal=pcse.signals.apply_n_snomin,
-                              amount=action,
-                              application_depth=10.,
-                              cnratio=0.,
-                              f_orgmat=0.,
-                              f_NH4N=0.5,
-                              f_NO3N=0.5,
-                              initial_age=0,
-                              )
-            self._send_signal(signal=pcse.signals.apply_n,
-                              amount=action,
-                              recovery=0.7,
-                              N_amount=action,
-                              N_recovery=0.7
-                              )
+            if self._action_mode in ['fertilization', 'fertilisation']:
+                self._send_signal(signal=pcse.signals.apply_n_snomin,
+                                  amount=action,
+                                  application_depth=10.,
+                                  cnratio=0.,
+                                  f_orgmat=0.,
+                                  f_NH4N=0.5,
+                                  f_NO3N=0.5,
+                                  initial_age=0,
+                                  )
+                self._send_signal(signal=pcse.signals.apply_n,
+                                  amount=action,
+                                  recovery=0.7,
+                                  N_amount=action,
+                                  N_recovery=0.7
+                                  )
+            else:
+                self._send_signal(
+                    signal=pcse.signals.irrigate,
+                    amount=action,
+                    efficiency=0.7,
+                )
 
         # Rate calculation
         self.calc_rates(self.day, self.drv)
@@ -319,6 +328,7 @@ class PCSEEnv(gym.Env):
                  location=None,
                  seed: int = None,
                  timestep: int = 1,
+                 action_mode: str = 'fertilization',
                  **kwargs
                  ):
 
@@ -326,6 +336,9 @@ class PCSEEnv(gym.Env):
 
         # Optionally set the seed
         super().reset(seed=seed)
+
+        # set action mode
+        self.action_mode = action_mode
 
         # If any parameter files are specified as path, convert them to a suitable object for pcse
         if isinstance(crop_parameters, str):
@@ -405,6 +418,7 @@ class PCSEEnv(gym.Env):
                        self._weather_data_provider,
                        self._agro_management,
                        config=self._model_config,
+                       action_mode=self.action_mode,
                        )
         # The model starts with output values for the initial date
         # The initial observation should contain output values for an entire timestep

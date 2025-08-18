@@ -7,10 +7,7 @@ import pcse
 import pcse_gym.envs.common_env as common_env
 import pcse_gym.utils.defaults as defaults
 import pcse_gym.utils.process_pcse_output as process_pcse
-from pcse_gym.utils.normalization import NormalizeMeasureObservations, RunningReward, MinMaxReward
 from pcse_gym.utils.nitrogen_helpers import convert_year_to_n_concentration
-from .constraints import VariableRecoveryRate
-from .measure import MeasureOrNot
 from .sb3 import ZeroNitrogenEnvStorage, StableBaselinesWrapper
 from .rewards import Rewards, ActionsContainer
 from .rewards import reward_functions_with_baseline, reward_functions_end, calculate_nue
@@ -30,7 +27,7 @@ class WinterWheat(gym.Env):
                  weather_features=defaults.get_default_weather_features(),
                  seed=0, costs_nitrogen=None, timestep=7, years=None, locations=None,
                  action_space=gym.spaces.Box(0, np.inf, shape=(1,)),
-                 action_multiplier=1.0, reward=None,
+                 action_multiplier=1.0, reward=None, mode='fertilization',
                  *args, **kwargs
                  ):
         self.crop_features = crop_features
@@ -61,6 +58,10 @@ class WinterWheat(gym.Env):
         self.list_n_i = [self.eval_nh4i, self.eval_no3i]
         self.rng, self.seed = gym.utils.seeding.np_random(seed=seed)
         self.masked_ac = kwargs.get('masked_ac', 0)
+        assert mode in ('fertilization', 'fertilisation', 'irrigation'), "Mode must be 'fertilization/fertilisation' or 'irrigation'"
+        self.action_mode = mode
+
+        print(f'Training {self.action_mode} actions!')
 
         """Masking variables"""
         self.n_steps = 0
@@ -108,25 +109,6 @@ class WinterWheat(gym.Env):
         """ Initialize reward function """
 
         self._init_reward_function(costs_nitrogen, kwargs)
-
-        """ Use AFA-POMDP measuring paradigm"""
-
-        if self.po_features:
-            self.__measure = MeasureOrNot(self.sb3_env, extend_obs=self.mask_binary,
-                                          placeholder_val=self.placeholder_val,
-                                          cost_multiplier=self.measure_cost_multiplier,
-                                          measure_all_flag=self.measure_all)
-
-        """ In-house normalization"""
-
-        if self.normalize:
-            self.loc_code = kwargs.get('loc_code', None)
-            self._norm = NormalizeMeasureObservations(self.crop_features, self.measure_features.feature_ind,
-                                                      has_random=True if 'random' in self.crop_features else False,
-                                                      no_weather=self.no_weather, loc=self.loc_code,
-                                                      start_type=kwargs.get('start_type', 'sowing'),
-                                                      mask_binary=self.mask_binary, reward_div=600, is_clipped=False)
-            # self._rew_norm = MinMaxReward()
 
         super().reset(seed=seed)
 
@@ -194,6 +176,7 @@ class WinterWheat(gym.Env):
                                       action_space=self.action_space,
                                       action_multiplier=self.action_multiplier,
                                       seed=seed,
+                                      mode=self.action_mode,
                                       *args, **kwargs)
 
     def _get_observation_space(self):

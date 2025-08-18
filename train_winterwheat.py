@@ -6,8 +6,13 @@ from datetime import datetime
 # import time
 import json
 
-from comet_ml import Experiment
-from comet_ml.integration.gymnasium import CometLogger
+try:
+    from comet_ml import Experiment
+    from comet_ml.integration.gymnasium import CometLogger
+except ImportError:
+    Experiment = None
+    CometLogger = None
+    use_comet = False
 import torch.nn as nn
 import torch
 
@@ -19,7 +24,6 @@ from pcse_gym.envs.constraints import ActionConstrainer
 from pcse_gym.envs.winterwheat import WinterWheat
 from pcse_gym.envs.sb3 import get_policy_kwargs, get_model_kwargs
 from pcse_gym.utils.eval import EvalCallback, determine_and_log_optimum
-from pcse_gym.utils.normalization import VecNormalizePO
 import pcse_gym.utils.defaults as defaults
 from pcse_gym.agent.masked_actorcriticpolicy import MaskedRecurrentActorCriticPolicy, MaskedActorCriticPolicy
 # from pcse_gym.agent.ppo_mod import RegPPO
@@ -87,6 +91,7 @@ def args_func(parser):
     parser.add_argument("--irs", type=str, default=None, dest='irs')
     parser.add_argument("--discrete-space", type=int, default=None, dest='discrete_space')
     parser.add_argument("--temporal-constraint", type=bool, default=False, dest='temporal_constraint')
+    parser.add_argument("--action-mode", type=str, default='fertilization', dest='action_mode')
     parser.set_defaults(measure=False, vrr=False, noisy_measure=False, framework='sb3',
                         no_weather=False, random_feature=False, obs_mask=False, placeholder_val=-1.11,
                         normalize=False, random_init=False, m_multiplier=1, measure_all=False, random_weather=False,
@@ -356,7 +361,6 @@ def train(log_dir, n_steps,
 
     # wrap comet after VecEnvs
     comet_log = None
-    use_comet = kwargs.get('comet', True)
     if use_comet:
         with open(os.path.join(rootdir, 'comet', 'comet_key'), 'r') as f:
             api_key = f.readline()
