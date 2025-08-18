@@ -34,8 +34,12 @@ pandas = { version = "^2.2.2", optional = true }
 sb-integration = ["stable-baselines3", "sb3-contrib", "matplotlib", "torch", "lib-programname", "tensorboard", "scipy", "tqdm", "pandas"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+#requires = ["poetry-core"]
+#requires = ["setuptools", "wheel"]
+#build-backend = "setuptools.build_meta"
+#build-backend = "poetry.core.masonry.api"
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
 
 # --- uv config
 
@@ -74,3 +78,6 @@ sb-integration = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["pcse_gym"]
+
+#[tool.setuptools.packages.find]
+#include = ["pcse_gym"]
