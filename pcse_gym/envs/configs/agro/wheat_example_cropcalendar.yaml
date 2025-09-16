@@ -1,0 +1,16 @@
+- 1999-08-01:
+    CropCalendar:
+        crop_name: winterwheat
+        variety_name: Arminda
+        crop_start_date: 1999-10-03
+        crop_start_type: sowing
+        crop_end_type: maturity
+        max_duration: 365
+    TimedEvents:
+    - event_signal: apply_n_snomin
+      name: Nitrogen application table
+      comment: All nitrogen amounts in kg ha-1
+      events_table:
+        - 1999-10-10: { amount: 100, application_depth: 10., cn_ratio: 0, f_orgmat: 0.1, f_NH4N: 0.3, f_NO3N: 0.7, initial_age: 0,}
+        - 1999-03-05: { amount: 50, application_depth: 10., cn_ratio: 0, f_orgmat: 0.3, f_NH4N: 0.5, f_NO3N: 0.5, initial_age: 0,}
+    StateEvents: null
