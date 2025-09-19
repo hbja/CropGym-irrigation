@@ -330,14 +330,20 @@ class StableBaselinesWrapper(common_env.PCSEEnv):
                 # In WOFOST SNOMIN some variables are layered.
                 # Loop through some checks to grab correct obs
                 if feature in ['SM', 'NH4', 'NO3', 'WC']:
-                    if feature in ['NH4', 'NO3']:
+                    if feature in ['NH4', 'NO3'] and self.pcse_env == 2:
                         obs[i] = sum(observation['crop_model'][feature][-1]) / m2_to_ha
+                    elif feature in ['NH4', 'NO3'] and self.pcse_env != 2:
+                        continue
                     elif feature in ['SM', 'WC'] and self.pcse_env == 1:
                         obs[i] = observation['crop_model'][feature][-1]
                     else:
                         obs[i] = np.mean(observation['crop_model'][feature][-1])
-                elif feature in ['RNO3DEPOSTT', 'RNH4DEPOSTT']:
+                elif feature in ['RNO3DEPOSTT', 'RNH4DEPOSTT'] and self.pcse_env == 2:
                     obs[i] = observation['crop_model'][feature][-1] / m2_to_ha
+                elif feature in ['RNO3DEPOSTT', 'RNH4DEPOSTT'] and self.pcse_env != 2:
+                    continue
+                elif feature in ['NLOSSCUM'] and self.pcse_env != 2:
+                    continue
                 elif feature in ['week']:
                     obs[i] = self.week
                 elif feature in ['Naction']:
